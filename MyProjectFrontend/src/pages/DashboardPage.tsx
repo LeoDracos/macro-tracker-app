@@ -34,10 +34,31 @@ function DashboardPage({ user }: DashboardPageProps) {
   const [food, setFood] = useState<Food | null>(null);
   const [servingSize, setServingSize] = useState<number>(1);
   const [searchType, setSearchType] = useState<String>("name");
+  // Daily Totals
   const [totalCalories, setTotalCalories] = useState<number>(0);
   const [totalProtein, setTotalProtein] = useState<number>(0);
   const [totalCarbs, setTotalCarbs] = useState<number>(0);
   const [totalFats, setTotalFats] = useState<number>(0);
+  // Breakfast Totals
+  const [breakfastCalories, setBreakfastCalories] = useState<number>(0);
+  const [breakfastProtein, setBreakfastProtein] = useState<number>(0);
+  const [breakfastCarbs, setBreakfastCarbs] = useState<number>(0);
+  const [breakfastFats, setBreakfastFats] = useState<number>(0);
+  // Lunch Totals
+  const [lunchCalories, setLunchCalories] = useState<number>(0);
+  const [lunchProtein, setLunchProtein] = useState<number>(0);
+  const [lunchCarbs, setLunchCarbs] = useState<number>(0);
+  const [lunchFats, setLunchFats] = useState<number>(0);
+  // Dinner Totals
+  const [dinnerCalories, setDinnerCalories] = useState<number>(0);
+  const [dinnerProtein, setDinnerProtein] = useState<number>(0);
+  const [dinnerCarbs, setDinnerCarbs] = useState<number>(0);
+  const [dinnerFats, setDinnerFats] = useState<number>(0);
+  // Snacks Totals
+  const [snacksCalories, setSnacksCalories] = useState<number>(0);
+  const [snacksProtein, setSnacksProtein] = useState<number>(0);
+  const [snacksCarbs, setSnacksCarbs] = useState<number>(0);
+  const [snacksFats, setSnacksFats] = useState<number>(0);
 
   const inputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     var lowerCase = e.target.value.toLowerCase();
@@ -103,6 +124,7 @@ function DashboardPage({ user }: DashboardPageProps) {
 
     setFood(food);
     getDailySummary();
+    getMealSummarys();
   };
 
   const getDailySummary = async () => {
@@ -124,6 +146,41 @@ function DashboardPage({ user }: DashboardPageProps) {
     setTotalFats(result.totalFat);
   };
 
+  const getMealSummarys = async () => {
+    const today = new Date();
+    const dateString = today.toISOString().split("T")[0];
+    const response = await fetch(
+      `http://localhost:8080/api/logs/mealSummaries?userId=${user.userId}&date=${dateString}`,
+    );
+    console.log(
+      "3. HTTP Response Status:",
+      response.status,
+      response.statusText,
+    );
+    const result = await response.json();
+    console.log("4. HTTP Response Data:", result);
+
+    setBreakfastCalories(result.breakfastCalories);
+    setBreakfastProtein(result.breakfastProtein);
+    setBreakfastCarbs(result.breakfastCarbs);
+    setBreakfastFats(result.breakfastFat);
+
+    setLunchCalories(result.lunchCalories);
+    setLunchProtein(result.lunchProtein);
+    setLunchCarbs(result.lunchCarbs);
+    setLunchFats(result.lunchFat);
+
+    setDinnerCalories(result.dinnerCalories);
+    setDinnerProtein(result.dinnerProtein);
+    setDinnerCarbs(result.dinnerCarbs);
+    setDinnerFats(result.dinnerFat);
+
+    setSnacksCalories(result.snacksCalories);
+    setSnacksProtein(result.snacksProtein);
+    setSnacksCarbs(result.snacksCarbs);
+    setSnacksFats(result.snacksFat);
+  };
+
   const servingSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     var serving = Number(e.target.value);
     setServingSize(serving / 100);
@@ -141,6 +198,7 @@ function DashboardPage({ user }: DashboardPageProps) {
 
   useEffect(() => {
     getDailySummary();
+    getMealSummarys();
   }, [user?.userId]);
 
   return (
@@ -198,31 +256,31 @@ function DashboardPage({ user }: DashboardPageProps) {
         <Stack spacing={7}>
           <MealMacroBar
             mealType="Breakfast"
-            calories={0}
-            protein={0}
-            carbs={0}
-            fats={0}
+            calories={breakfastCalories}
+            protein={breakfastProtein}
+            carbs={breakfastCarbs}
+            fats={breakfastFats}
           />
           <MealMacroBar
             mealType="Lunch"
-            calories={0}
-            protein={0}
-            carbs={0}
-            fats={0}
+            calories={lunchCalories}
+            protein={lunchProtein}
+            carbs={lunchCarbs}
+            fats={lunchFats}
           />
           <MealMacroBar
             mealType="Dinner"
-            calories={0}
-            protein={0}
-            carbs={0}
-            fats={0}
+            calories={dinnerCalories}
+            protein={dinnerProtein}
+            carbs={dinnerCarbs}
+            fats={dinnerFats}
           />
           <MealMacroBar
             mealType="Snack"
-            calories={0}
-            protein={0}
-            carbs={0}
-            fats={0}
+            calories={snacksCalories}
+            protein={snacksProtein}
+            carbs={snacksCarbs}
+            fats={snacksFats}
           />
         </Stack>
         <Button onClick={keyPress}>test!</Button>

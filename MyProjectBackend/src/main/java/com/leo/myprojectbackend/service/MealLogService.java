@@ -82,7 +82,7 @@ public class MealLogService {
         return summary;
     }
 
-    public MealSummarysDto getMealSummarys(Long userId, LocalDate date, MealType mealType){
+    public MealSummarysDto getMealSummarys(Long userId, LocalDate date){
         List<MealLog> mealLogList = mealLogRepository.findByUserIdAndLogDate(userId, date);
         MealSummarysDto mealSummarys = new MealSummarysDto();
 

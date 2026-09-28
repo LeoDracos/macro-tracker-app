@@ -108,41 +108,41 @@ const MealMacroBar = ({
           sx={{
             fontWeight: 600,
             fontSize: "1.1rem",
-            width: "153px",
             textAlign: "start",
+            width: "250px",
           }}
         >
-          Calories:
+          Calories: {calories}kcal
         </Typography>
         <Typography
           sx={{
             fontWeight: 600,
             fontSize: "1.1rem",
             textAlign: "start",
-            width: "124px",
+            width: "220px",
           }}
         >
-          Protein:
+          Protein: {protein}g
         </Typography>
         <Typography
           sx={{
             fontWeight: 600,
             fontSize: "1.1rem",
-            width: "217px",
             textAlign: "start",
+            width: "250px",
           }}
         >
-          Carbohydrates:
+          Carbohydrates: {carbs}g
         </Typography>
         <Typography
           sx={{
             fontWeight: 600,
             fontSize: "1.1rem",
-            width: "115px",
             textAlign: "start",
+            width: "250px",
           }}
         >
-          Fats:
+          Fats: {fats}g
         </Typography>
       </Stack>
     </Box>

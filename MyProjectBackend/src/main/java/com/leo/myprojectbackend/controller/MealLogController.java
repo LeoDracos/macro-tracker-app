@@ -1,6 +1,7 @@
 package com.leo.myprojectbackend.controller;
 
 import com.leo.myprojectbackend.dto.DailySummaryDto;
+import com.leo.myprojectbackend.dto.MealSummarysDto;
 import com.leo.myprojectbackend.entity.MealLogEntry;
 import com.leo.myprojectbackend.enums.MealType;
 import com.leo.myprojectbackend.service.MealLogService;
@@ -35,6 +36,12 @@ public class MealLogController {
     @GetMapping("/summary")
     public ResponseEntity<DailySummaryDto> getDailySummary(@RequestParam Long userId, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
         DailySummaryDto summary = mealLogService.getDailySummary(userId, date);
+        return ResponseEntity.ok(summary);
+    }
+
+    @GetMapping("/mealSummaries")
+    public ResponseEntity<MealSummarysDto> getMealSummarys(@RequestParam Long userId, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+        MealSummarysDto summary = mealLogService.getMealSummarys(userId, date);
         return ResponseEntity.ok(summary);
     }
 
