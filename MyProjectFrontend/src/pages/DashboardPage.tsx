@@ -102,6 +102,7 @@ function DashboardPage({ user }: DashboardPageProps) {
     });
 
     setFood(food);
+    getDailySummary();
   };
 
   const getDailySummary = async () => {
