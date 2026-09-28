@@ -7,6 +7,9 @@ import lombok.Setter;
 @Getter @Setter
 @AllArgsConstructor
 public class DailySummaryDto {
-    public DailySummaryDto(double totalCalories, double totalProtein, double totalCarbs, double totalFat) {
-    }
+        private double totalCalories;
+        private double totalProtein;
+        private double totalCarbs;
+        private double totalFat;
 }
+

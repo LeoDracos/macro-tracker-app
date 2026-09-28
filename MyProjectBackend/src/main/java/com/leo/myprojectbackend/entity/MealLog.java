@@ -29,8 +29,7 @@ public class MealLog {
     @Enumerated(EnumType.STRING)
     private MealType mealType;
 
-    @OneToMany
-    @JoinColumn(name = "entries_id")
+    @OneToMany(mappedBy = "mealLog", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MealLogEntry> entries = new ArrayList<>();
 
 

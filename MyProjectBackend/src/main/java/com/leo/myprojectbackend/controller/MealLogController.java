@@ -14,7 +14,7 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/logs")
-@CrossOrigin(origins = {"http://localhost:5174", "http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:5174", "http://localhost:3000", "http://localhost:5173"})
 @RequiredArgsConstructor
 public class MealLogController {
 

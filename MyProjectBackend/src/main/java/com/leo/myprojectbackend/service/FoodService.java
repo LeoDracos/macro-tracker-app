@@ -27,25 +27,18 @@ public class FoodService {
     private final RestTemplate restTemplate;
 
     public Food getOrCreateExternalFoodByBarcode(String barcode){
-        Optional<Food> cachedFood = foodRepository.findByExternalApiId(barcode);
-
-        if(cachedFood.isPresent())
-            return cachedFood.get();
-
         Food externalFood = fetchFromOpenFoodFacts(barcode);
 
-        return foodRepository.save(externalFood);
+        Optional<Food> optionalFood = foodRepository.findByExternalApiId(externalFood.getExternalApiId());
+        return optionalFood.orElseGet(() -> foodRepository.save(externalFood));
     }
 
     public Food getOrCreateExternalFoodByName(String name){
-        Optional<Food> cachedFood = foodRepository.findByExternalApiId(name);
-
-        if(cachedFood.isPresent())
-            return cachedFood.get();
-
         Food externalFood = searchFoodByName(name);
+        externalFood.setName(name);
 
-        return foodRepository.save(externalFood);
+        Optional<Food> optionalFood = foodRepository.findByExternalApiId(externalFood.getExternalApiId());
+        return optionalFood.orElseGet(() -> foodRepository.save(externalFood));
     }
 
     //OPENFOODFACTS

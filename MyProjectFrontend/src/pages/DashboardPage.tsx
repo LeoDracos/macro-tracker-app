@@ -1,15 +1,19 @@
 import {
   Box,
+  Button,
   CircularProgress,
+  LinearProgress,
   Stack,
   TextField,
   ToggleButton,
   ToggleButtonGroup,
+  Typography,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import React from "react";
 import MacroRing from "../components/MacroRing";
 import { User } from "../classes/User";
+import MealMacroBar from "../components/MealMacroBar";
 
 interface Food {
   id?: number;
@@ -18,20 +22,22 @@ interface Food {
   calories: number;
   protein: number;
   carbs: number;
-  fat: number;
+  fats: number;
 }
 
 interface DashboardPageProps {
-  user: User | null;
+  user: User;
 }
 
 function DashboardPage({ user }: DashboardPageProps) {
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [food, setFood] = useState<Food | null>(null);
   const [servingSize, setServingSize] = useState<number>(1);
   const [searchType, setSearchType] = useState<String>("name");
+  const [totalCalories, setTotalCalories] = useState<number>(0);
+  const [totalProtein, setTotalProtein] = useState<number>(0);
+  const [totalCarbs, setTotalCarbs] = useState<number>(0);
+  const [totalFats, setTotalFats] = useState<number>(0);
 
   const inputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     var lowerCase = e.target.value.toLowerCase();
@@ -43,10 +49,8 @@ function DashboardPage({ user }: DashboardPageProps) {
 
     if (search.trim() === "") return;
 
-    setLoading(true);
-    setError(null);
-
     let data;
+    setSearchType("name");
 
     if (searchType === "barcode") {
       const barcodeResponse = await fetch(
@@ -77,10 +81,46 @@ function DashboardPage({ user }: DashboardPageProps) {
       calories: data.calories,
       protein: data.protein,
       carbs: data.carbs,
-      fat: data.fat,
+      fats: data.fat,
     };
 
+    //confirm button
+    const today = new Date();
+    const dateString = today.toISOString().split("T")[0];
+    const response = await fetch(`http://localhost:8080/api/logs/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: user.userId,
+        date: dateString,
+        mealType: "BREAKFAST",
+        externalApiId: data.externalApiId,
+        servings: servingSize,
+      }),
+    });
+
     setFood(food);
+  };
+
+  const getDailySummary = async () => {
+    const today = new Date();
+    const dateString = today.toISOString().split("T")[0];
+    const response = await fetch(
+      `http://localhost:8080/api/logs/summary?userId=${user.userId}&date=${dateString}`,
+    );
+    console.log(
+      "3. HTTP Response Status:",
+      response.status,
+      response.statusText,
+    );
+    const result = await response.json();
+    console.log("4. HTTP Response Data:", result);
+    setTotalCalories(result.totalCalories);
+    setTotalProtein(result.totalProtein);
+    setTotalCarbs(result.totalCarbs);
+    setTotalFats(result.totalFat);
   };
 
   const servingSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,6 +138,10 @@ function DashboardPage({ user }: DashboardPageProps) {
     console.log("Search type changed to:", newSearchType);
   };
 
+  useEffect(() => {
+    getDailySummary();
+  }, [user?.userId]);
+
   return (
     <Box sx={{}}>
       <Box
@@ -114,79 +158,75 @@ function DashboardPage({ user }: DashboardPageProps) {
         <Stack direction="row" spacing={10}>
           <MacroRing
             label="Calories"
-            current={61}
-            target={278}
+            current={totalCalories}
+            target={user?.calories || 2000}
             colour="#cb9338"
-            unit="g"
+            unit="kcal"
           />
           <MacroRing
             label="Carbohydrates"
-            current={61}
-            target={278}
+            current={totalCarbs}
+            target={user?.carbs || 300}
             colour="#c35ea6"
             unit="g"
           />
           <MacroRing
             label="Protein"
-            current={61}
-            target={278}
+            current={totalProtein}
+            target={user?.protein || 120}
             colour="blue"
             unit="g"
           />
           <MacroRing
             label="Fats"
-            current={61}
-            target={278}
+            current={totalFats}
+            target={user?.fat || 75}
             colour="#459b73"
             unit="g"
           />
         </Stack>
       </Box>
-      Name:{food?.name || " "} Calories:
-      {(food?.calories as number) * servingSize || "0"} Protein:
-      {(food?.protein as number) * servingSize || "0"} Carbs:
-      {(food?.carbs as number) * servingSize || "0"} Fat:
-      {(food?.fat as number) * servingSize || "0"}
-      <ToggleButtonGroup
-        value={searchType}
-        exclusive
-        onChange={handleSearchTypeChange}
-      >
-        <ToggleButton value="name">Name</ToggleButton>
-        <ToggleButton value="barcode">Barcode</ToggleButton>
-      </ToggleButtonGroup>
-      <form
-        onSubmit={keyPress}
-        style={{
+      <Box
+        sx={{
           display: "flex",
           flexDirection: "column",
-          gap: "10px",
-          width: "300px",
+          alignItems: "stretch",
+          mt: 15,
         }}
       >
-        <TextField
-          id="outlined-basic"
-          onChange={inputChange}
-          variant="outlined"
-          label="Search"
-        />
-      </form>
-      <form
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          width: "300px",
-        }}
-      >
-        <TextField
-          onChange={servingSizeChange}
-          id="outlined-basic"
-          variant="outlined"
-          label="Number of grams or ml"
-          type="number"
-        />
-      </form>
+        <Stack spacing={7}>
+          <MealMacroBar
+            mealType="Breakfast"
+            calories={0}
+            protein={0}
+            carbs={0}
+            fats={0}
+          />
+          <MealMacroBar
+            mealType="Lunch"
+            calories={0}
+            protein={0}
+            carbs={0}
+            fats={0}
+          />
+          <MealMacroBar
+            mealType="Dinner"
+            calories={0}
+            protein={0}
+            carbs={0}
+            fats={0}
+          />
+          <MealMacroBar
+            mealType="Snack"
+            calories={0}
+            protein={0}
+            carbs={0}
+            fats={0}
+          />
+        </Stack>
+        <Button onClick={keyPress}>test!</Button>
+        <TextField onChange={inputChange} />
+      </Box>
     </Box>
   );
 }

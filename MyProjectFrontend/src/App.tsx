@@ -20,7 +20,7 @@ const PINK_COLOUR = "#fa6a60";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("setup");
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User>(new User());
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const calories = 2000;
   const protein = 150;
@@ -30,7 +30,7 @@ function App() {
   const loadPage = () => {
     switch (currentPage) {
       case "dashboard":
-        return <DashboardPage />;
+        return <DashboardPage user={user} />;
       case "profile":
         return <ProfilePage />;
       case "createFood":
@@ -103,10 +103,7 @@ function App() {
                 borderColor: "#323948",
               }}
             >
-              <Sidebar
-                setCurrentPage={setCurrentPage}
-                isLoggedIn={isLoggedIn}
-              />
+              <Sidebar setCurrentPage={setCurrentPage} isLoggedIn={true} />
             </Paper>
           </Grid>
 

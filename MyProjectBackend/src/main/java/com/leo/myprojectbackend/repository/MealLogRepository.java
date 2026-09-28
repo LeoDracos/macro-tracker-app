@@ -12,4 +12,5 @@ public interface MealLogRepository extends JpaRepository<MealLog, Long> {
 
 
     List<MealLog> findByUserIdAndLogDate(Long UserId, LocalDate logDate);
+
 }
